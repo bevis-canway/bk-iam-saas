@@ -69,9 +69,9 @@ class ESBAuthentication(BaseAuthentication):
 
         return True, jwt_payload
 
-    def _decode_jwt(self, content, public_key):
+    def _decode_jwt(self, content, public_key, algorithm="RS512"):
         try:
-            return jwt.decode(content, public_key, options={"verify_iss": False})
+            return jwt.decode(content, public_key, options={"verify_iss": False}, algorithm=algorithm)
         except Exception:  # pylint: disable=broad-except
             logger.exception("decode jwt fail, jwt: %s", content)
             return None
