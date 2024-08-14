@@ -48,11 +48,13 @@
             :group-data="groupData"
             :renewal-custom-perm="renewalCustomPerm"
             :cur-selected-group="curSelectedGroup"
+            :cur-selected-custom-perm="curSelectedCustomPerm"
             :delete-confirm-data="deleteConfirmData"
             @on-page-change="handlePageChange(...arguments, item)"
             @on-limit-change="handleLimitChange(...arguments, item)"
             @on-selected-group="handleSelectedGroup"
             @on-select-custom-perm="handleSelectedCustom"
+            @on-delete-all-system="handleDeleteAllSystem"
             @on-quit-group="handleQuitGroup"
             @on-clear="handleEmptyClear"
             @on-refresh="handleEmptyRefresh"
@@ -994,7 +996,13 @@
       handleQuitGroup (payload) {
         this.handleRefreshGroup(payload, 1);
       },
-  
+
+      handleDeleteAllSystem () {
+        this.curSelectedCustomPerm = [];
+        this.handleSelectedGroup([]);
+        this.fetchRefreshPermData();
+      },
+
       handlePageChange (current, payload) {
         const curData = this.allPermItem.find((item) => item.id === payload.id);
         if (curData) {
