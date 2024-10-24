@@ -59,4 +59,8 @@ __all__ = [
     "ManagementSubsetManagerViewSet",
     "ManagementGradeManagerSubjectTemplateViewSet",
     "ManagementMemberGroupDetailViewSet",
+    "ManagementGroupPolicyTemplateViewSet",
+    "ManagementTemplateViewSet",
+    "ManagementSystemProviderConfigViewSet",
+    "ManagementSystemViewSet",
 ]

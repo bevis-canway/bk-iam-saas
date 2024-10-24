@@ -40,6 +40,10 @@ class AdminGroupAddMemberSLZ(GroupAddMemberSLZ):
     pass
 
 
+class AdminGroupRemoveMemberSLZ(serializers.Serializer):
+    members = serializers.ListField(label="成员列表", child=serializers.CharField(label="成员id"), allow_empty=False)
+
+
 class AdminSubjectGroupSLZ(serializers.Serializer):
     id = serializers.CharField(label="用户组id")
     name = serializers.CharField(label="用户组名称")

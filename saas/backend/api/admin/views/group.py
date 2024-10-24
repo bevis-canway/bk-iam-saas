@@ -24,14 +24,14 @@ from backend.api.admin.serializers import (
     AdminGroupAuthorizationSLZ,
     AdminGroupBasicSLZ,
     AdminGroupCreateSLZ,
-    AdminGroupMemberSLZ,
+    AdminGroupMemberSLZ, AdminGroupRemoveMemberSLZ,
 )
 from backend.api.authentication import ESBAuthentication
 from backend.api.management.v2.views import ManagementGroupViewSet
 from backend.apps.group.audit import (
     GroupCreateAuditProvider,
     GroupMemberCreateAuditProvider,
-    GroupTemplateCreateAuditProvider,
+    GroupTemplateCreateAuditProvider, GroupMemberDeleteAuditProvider,
 )
 from backend.apps.group.constants import OperateEnum
 from backend.apps.group.models import Group
@@ -140,6 +140,8 @@ class AdminGroupMemberViewSet(GenericViewSet):
     admin_api_permission = {
         "list": AdminAPIEnum.GROUP_MEMBER_LIST.value,
         "create": AdminAPIEnum.GROUP_MEMBER_ADD.value,
+        "destroy": AdminAPIEnum.GROUP_MEMBER_REMOVE.value,
+
     }
 
     queryset = Group.objects.all()
@@ -199,7 +201,26 @@ class AdminGroupMemberViewSet(GenericViewSet):
 
         return Response({})
 
+    @swagger_auto_schema(operation_description="用户组删除成员",
+                         responses={status.HTTP_204_NO_CONTENT: "NoContent"},
+                         tags=["admin.group.member"], )
+    @view_audit_decorator(GroupMemberDeleteAuditProvider)
+    def destroy(self, request, *args, **kwargs):
+        group = self.get_object()
+        serializer = AdminGroupRemoveMemberSLZ(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        members_data = data["members"]
+        members = list(set(parse_obj_as(List[Subject], members_data)))
+        # 排除组织架构中不存在的成员
+        members = remove_not_exist_subject(members)
+        if members:
+            # 移除成员
+            self.biz.remove_members(group.id, members)
+        # 写入审计上下文
+        audit_context_setter(group=group, members=[m.dict() for m in members])
 
+        return Response(status=status.HTTP_204_NO_CONTENT)
 class AdminGroupPolicyViewSet(GenericViewSet):
     """用户组授权"""
 
