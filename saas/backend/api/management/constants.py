@@ -43,6 +43,9 @@ class ManagementAPIEnum(BaseAPIEnum):
     USER_ROLE_GROUP_LIST = auto()
     # 用户组申请单
     GROUP_APPLICATION_CREATE = auto()
+    # 模板
+    TEMPLATE_LIST = auto()
+    TEMPLATE_CREATE = auto()
 
     # V2 API
     # 用户组

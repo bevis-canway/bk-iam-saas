@@ -50,6 +50,6 @@ class AdminSystemProviderConfigViewSet(GenericViewSet):
     )
     def list(self, request, *args, **kwargs):
         system_id = kwargs["system_id"]
-        system_provider_config = SystemProviderConfigService().get_provider_config(system_id=system_id)
+        system_provider_config = SystemProviderConfigService().get_pronivider_config(system_id=system_id)
 
         return Response(AdminSystemProviderConfigSLZ(system_provider_config).data)

@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from backend.api.authentication import ESBAuthentication
-from backend.api.management.constants import ManagementAPIEnum
+from backend.api.management.constants import ManagementAPIEnum, VerifyApiParamLocationEnum
 from backend.api.management.v2.permissions import ManagementAPIPermission
 from backend.api.management.v2.serializers import ManagementTemplateListSchemaSLZ, ManagementTemplateListSLZ, \
     ManagementTemplateCreateSLZ, ManagementTemplateIdSLZ
@@ -34,9 +34,9 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
     authentication_classes = [ESBAuthentication]
     permission_classes = [ManagementAPIPermission]
 
-    admin_api_permission = {
-        "list": ManagementAPIEnum.TEMPLATE_LIST.value,
-        "create": ManagementAPIEnum.TEMPLATE_CREATE.value,
+    management_api_permission = {
+        "list": (VerifyApiParamLocationEnum.SYSTEM_IN_BODY.value, ManagementAPIEnum.TEMPLATE_LIST.value),
+        "create": (VerifyApiParamLocationEnum.SYSTEM_IN_BODY.value, ManagementAPIEnum.TEMPLATE_CREATE.value)
     }
 
     template_biz = TemplateBiz()
