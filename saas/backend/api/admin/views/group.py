@@ -208,7 +208,7 @@ class AdminGroupMemberViewSet(GenericViewSet):
     def destroy(self, request, *args, **kwargs):
         group = self.get_object()
 
-        serializer = AdminGroupRemoveMemberSLZ(data=request.query_params)
+        serializer = AdminGroupRemoveMemberSLZ(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         members = data["members"]
@@ -217,9 +217,10 @@ class AdminGroupMemberViewSet(GenericViewSet):
             self.biz.remove_members(str(group.id), subjects)
 
         # 写入审计上下文
-        audit_context_setter(group=group, members=[m.dict() for m in members])
+        audit_context_setter(group=group, members=data["members"])
+        return Response({})
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class AdminGroupPolicyViewSet(GenericViewSet):
     """用户组授权"""
 

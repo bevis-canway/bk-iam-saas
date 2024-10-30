@@ -16,6 +16,7 @@ from backend.apps.group.serializers import GroupAddMemberSLZ, GroupAuthorization
 from backend.apps.role.models import Role
 from backend.apps.role.serializers import BaseGradeMangerSLZ
 from backend.apps.template.serializers import TemplateCreateSLZ, TemplateIdSLZ, TemplateListSchemaSLZ, TemplateListSLZ
+from backend.common.serializers import GroupMemberSLZ
 from backend.service.constants import GroupMemberType, RoleType
 
 
@@ -41,7 +42,8 @@ class AdminGroupAddMemberSLZ(GroupAddMemberSLZ):
 
 
 class AdminGroupRemoveMemberSLZ(serializers.Serializer):
-    members = serializers.ListField(label="成员列表", child=serializers.CharField(label="成员id"), allow_empty=False)
+    members = serializers.ListField(label="成员列表", child=GroupMemberSLZ(label="成员"), allow_empty=False)
+    # pass
 
 
 class AdminSubjectGroupSLZ(serializers.Serializer):
