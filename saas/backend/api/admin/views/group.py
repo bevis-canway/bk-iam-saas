@@ -207,16 +207,15 @@ class AdminGroupMemberViewSet(GenericViewSet):
     @view_audit_decorator(GroupMemberDeleteAuditProvider)
     def destroy(self, request, *args, **kwargs):
         group = self.get_object()
-        serializer = AdminGroupRemoveMemberSLZ(data=request.data)
+
+        serializer = AdminGroupRemoveMemberSLZ(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        members_data = data["members"]
-        members = list(set(parse_obj_as(List[Subject], members_data)))
-        # 排除组织架构中不存在的成员
-        members = remove_not_exist_subject(members)
-        if members:
-            # 移除成员
-            self.biz.remove_members(group.id, members)
+        members = data["members"]
+        subjects = parse_obj_as(List[Subject], members)
+        if subjects:
+            self.biz.remove_members(str(group.id), subjects)
+
         # 写入审计上下文
         audit_context_setter(group=group, members=[m.dict() for m in members])
 

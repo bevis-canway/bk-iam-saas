@@ -176,7 +176,7 @@ urlpatterns = [
     ),
     # 系统回调信息
     path(
-        "systems/<str:system_id>/provider_config/",
+        "provider_config/",
         views.ManagementSystemProviderConfigViewSet.as_view({"get": "list"}),
         name="open.management.system_provider_config",
     ),
