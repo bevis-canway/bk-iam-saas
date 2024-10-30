@@ -90,6 +90,9 @@ class ManagementAPIEnum(BaseAPIEnum):
     # 人员模版
     V2_SUBJECT_TEMPLATE_LIST = auto()
 
+    # 获取系统回调信息
+    SYSTEM_PROVIDER_CONFIG_LIST = auto()
+
     _choices_labels = skip(
         (
             # 分级管理员
@@ -154,6 +157,7 @@ class ManagementAPIEnum(BaseAPIEnum):
             (V2_APPLICATION_APPROVAL, "[V2]申请单审批通知"),
             # 申请单取消
             (V2_APPLICATION_CANCEL, "[V2]申请单取消"),
+            (SYSTEM_PROVIDER_CONFIG_LIST, "获取系统回调信息"),
         )
     )
 
