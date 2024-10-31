@@ -733,7 +733,7 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
     pagination_class = None  # 去掉swagger中的limit offset参数
 
     management_api_permission = {
-        "create": (VerifyApiParamLocationEnum.GROUP_IN_PATH.value, ManagementAPIEnum.GROUP_POLICY_GRANT.value),
+        "create": ("ignore", "ignore"),
     }
 
     lookup_field = "id"
@@ -769,4 +769,4 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
             templates=[{"system_id": t["system_id"], "template_id": t["template_id"]} for t in data["templates"]],
         )
 
-        return Response({}, status=status.HTTP_201_CREATED)
+        return Response({})
