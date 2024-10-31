@@ -747,7 +747,7 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         operation_description="用户组权限模版授权",
-        request_body=ManagementGroupGrantSLZ(label="权限"),
+        request_body=ManagementGroupAuthorizationSLZ(label="权限"),
         responses={status.HTTP_200_OK: serializers.Serializer()},
         tags=["management.role.group.policy"],
     )

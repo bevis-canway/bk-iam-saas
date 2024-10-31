@@ -18,6 +18,7 @@ from backend.api.management.constants import ManagementAPIEnum, VerifyApiParamLo
 from backend.api.management.v2.permissions import ManagementAPIPermission
 from backend.api.management.v2.serializers import ManagementTemplateListSchemaSLZ, ManagementTemplateListSLZ, \
     ManagementTemplateCreateSLZ, ManagementTemplateIdSLZ
+from backend.apps.organization.models import User
 from backend.apps.role.models import Role
 from backend.apps.template.audit import TemplateCreateAuditProvider
 from backend.apps.template.views import TemplateQueryMixin
@@ -50,7 +51,8 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
     def list(self, request, *args, **kwargs):
         role_id = request.query_params.get("role_id")
         role = Role.objects.get(type=RoleType.GRADE_MANAGER.value, id=role_id)
-        queryset = RoleListQuery(role, request.user).query_template()
+        user = User.objects.get(username='admin')
+        queryset = RoleListQuery(role, user).query_template()
 
         # 查询 role 的 system-actions set
         role_system_actions = RoleListQuery(role).get_scope_system_actions()
