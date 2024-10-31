@@ -48,7 +48,8 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         tags=["management.role.template"],
     )
     def list(self, request, *args, **kwargs):
-        role = Role.objects.get(type=RoleType.GRADE_MANAGER.value)
+        role_id = request.query_params.get("role_id")
+        role = Role.objects.get(type=RoleType.GRADE_MANAGER.value, id=role_id)
         queryset = RoleListQuery(role, request.user).query_template()
 
         # 查询 role 的 system-actions set
@@ -78,12 +79,14 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         """
         创建模板
         """
+        request.data["system_id"] = request.data.pop("system")
+        role_id = request.data.pop("role_id")
         serializer = ManagementTemplateCreateSLZ(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user_id = request.user.username
         data = serializer.validated_data
-        role = Role.objects.get(type=RoleType.GRADE_MANAGER.value)
+        role = Role.objects.get(id=role_id, type=RoleType.GRADE_MANAGER.value)
 
         # 检查模板的授权是否满足管理员的授权范围
         scope_checker = RoleAuthorizationScopeChecker(role)
@@ -97,4 +100,4 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
 
         audit_context_setter(template=template)
 
-        return Response({"id": template.id}, status=status.HTTP_201_CREATED)
+        return Response({})
