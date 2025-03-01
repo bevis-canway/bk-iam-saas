@@ -19,4 +19,5 @@ class ModelEvent(BaseModel):
     # 变更影响的模型，可能是action、policy、resource_type
     model_type: str
     model_id: str
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, protected_namespaces=())
+
