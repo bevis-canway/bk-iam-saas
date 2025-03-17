@@ -700,8 +700,6 @@ class GroupBiz:
         for template in templates:
             action_ids = [p.action_id for p in template.policies]
             if template.template_id != 0:
-                # 检查模版是否属于角色创建
-                self.template_check_biz.check_group_role_template_permissions(role, template.template_id)
                 # 检查操作列表是否与模板一致
                 self.template_check_biz.check_add_member(template.template_id, subject, action_ids)
             elif need_check_action_not_exists:

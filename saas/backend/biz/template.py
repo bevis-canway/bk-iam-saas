@@ -17,8 +17,7 @@ from pydantic import BaseModel, parse_obj_as
 from pydantic.fields import Field
 
 from backend.apps.group.models import GroupAuthorizeLock
-from backend.apps.organization.models import User
-from backend.apps.role.models import Role, RoleRelatedObject
+from backend.apps.role.models import RoleRelatedObject
 from backend.apps.template.models import (
     PermTemplate,
     PermTemplatePolicyAuthorized,
@@ -36,7 +35,7 @@ from backend.biz.policy import (
     ThinAction,
     group_paths,
 )
-from backend.biz.role import RoleAuthorizationScopeChecker, RoleListQuery
+from backend.biz.role import RoleAuthorizationScopeChecker
 from backend.common.error_codes import error_codes
 from backend.common.time import PERMANENT_SECONDS
 from backend.service.action import ActionList, ActionService
@@ -317,17 +316,6 @@ class TemplateCheckBiz:
                     set(exists_group_ids) - set(map(str, pre_commit_group_ids))
                 )
             )
-
-    def check_group_role_template_permissions(self, role: Role, template_id: int, user: Optional[User] = None):
-        """
-        检查模版是否在角色的用户组可授权的范围内
-        """
-        # esb接口没有用户信息，使用admin用户
-        if not user:
-            user = User.objects.get(username="admin")
-        permissions_template_ids = RoleListQuery(role, user).query_template().values_list("id", flat=True)
-        if template_id not in permissions_template_ids:
-            raise error_codes.VALIDATE_ERROR.format(_("权限模板: {} 不存在").format(template_id))
 
 
 class ActionCloneConfig(BaseModel):
