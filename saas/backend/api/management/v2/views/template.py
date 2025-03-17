@@ -95,9 +95,9 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         分管创建模板
         """
         role_id = kwargs["id"]
+        request.data["system_id"] = request.data.pop("system")
         serializer = ManagementTemplateCreateSLZ(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         user_id = request.user.username
         data = serializer.validated_data
         role = get_object_or_404(self.queryset, id=role_id)
