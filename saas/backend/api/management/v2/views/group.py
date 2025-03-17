@@ -759,11 +759,12 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
         data = serializer.validated_data
 
         role = self.role_biz.get_role_by_group_id(group.id)
+        templates = self.group_trans.from_group_grant_data(data["templates"])
+
         # 校验授权范围
         self.group_biz.check_before_grant(
-            group, [data["templates"]], role, need_check_action_not_exists=False, need_check_resource_name=False
+            group, [templates], role, need_check_action_not_exists=False, need_check_resource_name=False
         )
-        templates = self.group_trans.from_group_grant_data(data["templates"])
         self.group_biz.grant(role, group, templates)
 
         # 写入审计上下文
