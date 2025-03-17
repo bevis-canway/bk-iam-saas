@@ -174,16 +174,4 @@ urlpatterns = [
         views.ManagementTemplateViewSet.as_view({"get": "list", "post": "create"}),
         name="open.management.v2.template",
     ),
-    # 系统回调信息
-    path(
-        "provider_config/",
-        views.ManagementSystemProviderConfigViewSet.as_view({"get": "list"}),
-        name="open.management.system_provider_config",
-    ),
-    # 系统列表 list(不分页, 或者分页, page_size不传默认100?)
-    path(
-        "systems/",
-        views.ManagementSystemViewSet.as_view({"get": "list"}),
-        name="open.management.system",
-    ),
 ]

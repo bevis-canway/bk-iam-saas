@@ -23,6 +23,7 @@ from backend.api.management.v2.filters import GroupFilter
 from backend.api.management.v2.permissions import ManagementAPIPermission
 from backend.api.management.v2.serializers import (
     ManagementGradeManagerGroupCreateSLZ,
+    ManagementGroupAuthorizationSLZ,
     ManagementGroupBaseInfoUpdateSLZ,
     ManagementGroupGrantSLZ,
     ManagementGroupMemberDeleteSLZ,
@@ -32,8 +33,6 @@ from backend.api.management.v2.serializers import (
     ManagementGroupSLZ,
     ManagementGroupSubjectTemplateSLZ,
     ManagementQueryGroupSLZ,
-    ManagementGroupAuthorizationSLZ,
-
 )
 from backend.apps.group.audit import (
     GroupCreateAuditProvider,
@@ -733,7 +732,7 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
     pagination_class = None  # 去掉swagger中的limit offset参数
 
     management_api_permission = {
-        "create": ("ignore", "ignore"),
+        "create": (VerifyApiParamLocationEnum.GROUP_IN_PATH.value, ManagementAPIEnum.V2_GROUP_POLICY_GRANT.value),
     }
 
     lookup_field = "id"
@@ -760,6 +759,10 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
         data = serializer.validated_data
 
         role = self.role_biz.get_role_by_group_id(group.id)
+        # 校验授权范围
+        self.group_biz.check_before_grant(
+            group, [data["templates"]], role, need_check_action_not_exists=False, need_check_resource_name=False
+        )
         templates = self.group_trans.from_group_grant_data(data["templates"])
         self.group_biz.grant(role, group, templates)
 
