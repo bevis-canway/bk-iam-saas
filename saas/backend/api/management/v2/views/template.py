@@ -25,6 +25,8 @@ from backend.api.management.v2.serializers import (
 from backend.apps.organization.models import User
 from backend.apps.role.models import Role
 from backend.apps.template.audit import TemplateCreateAuditProvider
+from backend.apps.template.filters import TemplateFilter
+from backend.apps.template.models import PermTemplate
 from backend.apps.template.views import TemplateQueryMixin
 from backend.audit.audit import audit_context_setter, view_audit_decorator
 from backend.biz.role import RoleAuthorizationScopeChecker, RoleListQuery
@@ -41,18 +43,19 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
 
     management_api_permission = {
         "list": (
-            VerifyApiParamLocationEnum.SYSTEM_IN_PATH.value,
+            VerifyApiParamLocationEnum.ROLE_IN_PATH.value,
             ManagementAPIEnum.V2_GRADE_MANAGER_TEMPLATE_LIST.value,
         ),
         "create": (
-            VerifyApiParamLocationEnum.SYSTEM_IN_BODY.value,
+            VerifyApiParamLocationEnum.ROLE_IN_PATH.value,
             ManagementAPIEnum.V2_GRADE_MANAGER_TEMPLATE_CREATE.value,
         ),
     }
-    queryset = Role.objects.filter(type=RoleType.GRADE_MANAGER.value)
-
+    queryset = PermTemplate.objects.all()
+    lookup_field = "id"
     template_biz = TemplateBiz()
     template_check_biz = TemplateCheckBiz()
+    filterset_class = TemplateFilter
 
     @swagger_auto_schema(
         operation_description="模板列表",
@@ -60,12 +63,10 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         tags=["management.role.template"],
     )
     def list(self, request, *args, **kwargs):
-        role_id = request.query_params.get("role_id")
-        role = get_object_or_404(self.queryset, id=role_id)
+        role = get_object_or_404(Role, type=RoleType.GRADE_MANAGER.value, id=kwargs["id"])
         # 用户校验，默认用admin
         user = User.objects.get(username="admin")
-        queryset = RoleListQuery(role, user).query_template()
-
+        queryset = self.filter_queryset(RoleListQuery(role, user).query_template())
         # 查询 role 的 system-actions set
         role_system_actions = RoleListQuery(role).get_scope_system_actions()
 
@@ -93,7 +94,7 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         """
         分管创建模板
         """
-        role_id = request.data.pop("role_id")
+        role_id = kwargs["id"]
         serializer = ManagementTemplateCreateSLZ(data=request.data)
         serializer.is_valid(raise_exception=True)
 

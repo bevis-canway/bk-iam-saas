@@ -70,6 +70,7 @@ from backend.common.lock import gen_group_upsert_lock
 from backend.common.pagination import CompatiblePagination
 from backend.service.constants import GroupSaaSAttributeEnum, RoleType, SubjectType
 from backend.service.models import Subject
+from backend.trans.group import GroupTrans
 from backend.trans.open_management import ManagementCommonTrans
 
 
@@ -739,6 +740,7 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
     queryset = Group.objects.all()
 
     group_biz = GroupBiz()
+    group_trans = GroupTrans()
     role_biz = RoleBiz()
     policy_operation_biz = PolicyOperationBiz()
     policy_query_biz = PolicyQueryBiz()
@@ -763,7 +765,7 @@ class ManagementGroupPolicyTemplateViewSet(GenericViewSet):
 
         # 校验授权范围
         self.group_biz.check_before_grant(
-            group, [templates], role, need_check_action_not_exists=False, need_check_resource_name=False
+            group, templates, role, need_check_action_not_exists=False, need_check_resource_name=False
         )
         self.group_biz.grant(role, group, templates)
 

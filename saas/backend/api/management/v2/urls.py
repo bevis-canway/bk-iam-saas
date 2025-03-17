@@ -170,7 +170,7 @@ urlpatterns = [
     ),
     # 分级管理员创建权限模板
     path(
-        "templates/",
+        "grade_managers/<int:id>/templates/",
         views.ManagementTemplateViewSet.as_view({"get": "list", "post": "create"}),
         name="open.management.v2.template",
     ),
