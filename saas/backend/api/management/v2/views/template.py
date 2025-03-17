@@ -100,7 +100,7 @@ class ManagementTemplateViewSet(TemplateQueryMixin, GenericViewSet):
         serializer.is_valid(raise_exception=True)
         user_id = request.user.username
         data = serializer.validated_data
-        role = get_object_or_404(self.queryset, id=role_id)
+        role = get_object_or_404(Role, type=RoleType.GRADE_MANAGER.value, id=role_id)
 
         # 检查模板的授权是否满足管理员的授权范围
         scope_checker = RoleAuthorizationScopeChecker(role)
