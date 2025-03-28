@@ -13,10 +13,9 @@ RUN rm /etc/apt/sources.list && \
     echo "deb-src https://mirrors.cloud.tencent.com/debian bullseye main contrib non-free" >> /etc/apt/sources.list && \
     echo "deb-src https://mirrors.cloud.tencent.com/debian bullseye-updates main contrib non-free" >> /etc/apt/sources.list
 
-RUN mkdir ~/.pip &&  printf '[global]\nindex-url = https://bkrepo.cwoa.net/pypi/aiops/kingeye-pypi/simple' > ~/.pip/pip.conf
+RUN mkdir ~/.pip &&  printf '[global]\nindex-url = https://mirrors.cloud.tencent.com/pypi/simple/' > ~/.pip/pip.conf
 
-#RUN apt-get update && apt-get install -y gcc libssl-dev default-libmysqlclient-dev build-essential
-#RUN apt-get update && apt-get -y install libssl1.0-dev gcc default-libmysqlclient-dev build-essential
+RUN apt-get update && apt-get -y install libssl1.0-dev gcc default-libmysqlclient-dev build-essential
 
 
 
@@ -29,6 +28,6 @@ RUN pip3 install --upgrade pip
 
 COPY --from=builder /app/src /app
 WORKDIR /app
-RUN pip install -r requirements.txt -i https://bkrepo.cwoa.net/pypi/aiops/kingeye-pypi/simple
+RUN pip install -r requirements.txt 
 
 CMD ["bash", "/app/bin/start.sh"]
