@@ -331,8 +331,9 @@ class BatchPolicyResourceCopyViewSet(GenericViewSet):
                     continue
 
                 # 过滤满足实例视图的资源
+                # 修改点：不再忽略带属性的条件，支持带属性条件的操作也能重新调用
                 new_resource_type = resource_type.clone_and_filter_by_instance_selections(
-                    rrt.instance_selections, ignore_attribute=True
+                    rrt.instance_selections, ignore_attribute=False
                 )
                 if not new_resource_type:
                     continue
